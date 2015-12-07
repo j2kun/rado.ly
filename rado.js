@@ -11,6 +11,18 @@ function getVertexByName(name) {
    return null;
 }
 
+function edgeInGraph(source, target) {
+   for (var i = 0; i < graph.edges.length; i++) {
+      var e = graph.edges[i];
+      if ((e.source.name == source.name && e.target.name == target.name) || 
+          (e.source.name == target.name && e.target.name == source.name)) {
+         return true;
+      }
+   }
+   
+   return false;
+}
+
 
 // D3 globals
 var edge,   // selection of all svg line objects
@@ -40,8 +52,8 @@ function dragstart(d) {
 
 
 function initialize() {
-   var width=1000,
-       height=800;
+   var width=1600,
+       height=1000;
 
    force = d3.layout.force()
        .size([width, height])
@@ -110,17 +122,17 @@ function updateD3() {
    edge.exit().remove();
 }
 
-initialize();
 
-
-function addVertex(graph, vertex) {
+function addVertex(vertex) {
    graph.vertices.push({id:graph.numVertices, name:graph.numVertices+1});
    graph.numVertices += 1; 
 }
 
-function addEdge(graph, source, target) {
-   graph.edges.push({source:source, target:target});
-   graph.numEdges += 1; 
+function addEdge(source, target) {
+   if (!edgeInGraph(source, target)) {
+      graph.edges.push({source:source, target:target});
+      graph.numEdges += 1; 
+   }
 }
 
 function tryParseEdge(str) {
@@ -194,7 +206,7 @@ state = {
                case KEY_ENTER:
                   edge = tryParseEdge(this.commandBuffer);
                   if (edge) {
-                     addEdge(graph, edge[0], edge[1]);
+                     addEdge(edge[0], edge[1]);
                   }
                   this.clear();
                   break;
@@ -202,7 +214,7 @@ state = {
                case KEY_E:
                   edge = tryParseEdge(this.commandBuffer);
                   if (edge) {
-                     addEdge(graph, edge[0], edge[1]);
+                     addEdge(edge[0], edge[1]);
                   } 
                   this.clear();
                   this.mode = COMMAND_EDGE_ADD;
@@ -220,7 +232,7 @@ state = {
          default:
             switch(code) {
                case KEY_V:
-                  addVertex(graph, vertex);
+                  addVertex(vertex);
                   break;
 
                case KEY_E:
@@ -237,4 +249,5 @@ state = {
 
 };
 
+initialize();
 $("body").keypress(function(e) { state.update(e); });
