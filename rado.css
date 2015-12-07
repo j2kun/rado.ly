@@ -1,0 +1,19 @@
+
+.vertex {
+   cursor: move;
+   fill: #ccc;
+   stroke: #000;
+   stroke-width: 1.5px;
+}
+
+.vertex text {
+   font: 14px sans-serif;
+   pointer-events: none;
+   text-anchor: middle;
+}
+
+.edge {
+   stroke: #000;
+   stroke-width: 1.5px;
+}
+
