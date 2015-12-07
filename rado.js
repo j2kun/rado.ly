@@ -132,7 +132,7 @@ function tryParseEdge(str) {
       secondName = pieces[1]; 
    } else if (pieces.length == 1) {
       // greedily match any vertex name
-      firstName = str;
+      firstName = str.slice(0,-1); // the whole string cannot be a single vertex
       while (firstName.length > 0 && getVertexByName(firstName) == null) {
          firstName = firstName.slice(0,-1);         
       }
