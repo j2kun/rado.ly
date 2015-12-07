@@ -8,8 +8,8 @@ Currently supported commands:
  - `v` adds a new vertex (with an automatically chosen integer identifier)
  - `ei,j<ENTER>` adds a new edge between vertices `i` and `j`, with a comma or
    space separating them in the command. 
- - To ease the process of adding many new edges, one can replace <ENTER> above
-   with e to chain many new edge additions, e.g. `e1,7e1,8e1,9`. 
+ - To ease the process of adding many new edges, one can replace `<ENTER>` above
+   with `e` to chain many new edge additions, e.g. `e1,7e1,8e1,9<ENTER>`. 
  - To further ease the process, the separator can be removed and the first
    vertex name will be greedily chosen from the beginning. i.e. `e117<ENTER>`
 adds an edge from vertex `1` to vertex `17`, unless there is another vertex
