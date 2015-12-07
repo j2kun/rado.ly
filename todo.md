@@ -10,3 +10,4 @@
  - prepopulated random graphs ;load petersen
  - coloring vertices and edges
  - macro system for adding many vertices and edges
+ - implement undo with u and redo with r
