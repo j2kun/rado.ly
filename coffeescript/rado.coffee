@@ -1,5 +1,11 @@
+import clone from 'clone';
+
 // Working graph
 var graph; 
+
+// linked list of history
+var history = [graph];
+var current = 0;
 
 function getVertexByName(name) {
    for (var i = 0; i < graph.vertices.length; i++) {
