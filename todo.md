@@ -1,5 +1,6 @@
 # Todo
 
+ - test organizational changes
  - Implement a hover text somewhere that displays the current (and last executed) command
  - Toggle force-directed layout on and off with ;layout fixed and ;layout force 
  - adding named vertices

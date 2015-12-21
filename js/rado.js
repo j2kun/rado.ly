@@ -1,9 +1,7 @@
 // Working graph
-var graph;
-
-// linked list of history
-var history = [graph];
-var current = 0;
+var G = new graph();
+G.addEdge(G.addVertex(), G.addVertex());
+var state = new State(G);
 
 // D3 globals
 var edge,   // selection of all svg line objects
@@ -39,7 +37,7 @@ function initialize() {
    force = d3.layout.force()
        .size([width, height])
        .charge(-400)
-       .linkDistance(40) // want to make this an option!
+       .linkDistance(40) // make this an option eventually
        .on("tick", tick);
 
    drag = force.drag()
@@ -49,30 +47,21 @@ function initialize() {
        .attr("width", width)
        .attr("height", height);
 
-   graph = new graph();
-   var v1 = graph.addVertex();
-   var v2 = graph.addVertex();
-   graph.addEdge(v1, v2);
-
    updateD3();
 }
 
 // Call this function any time the underlying graph data changes
 function updateD3() {
-   force.nodes(graph.vertices)
-        .links(graph.edges)
+   force.nodes(state.currentGraph.vertices)
+        .links(state.currentGraph.edges)
         .start();
 
    vertex = d3.select("svg").selectAll(".vertex");
    edge = d3.select("svg").selectAll(".edge");
 
    // data join returns update selections (common to DOM and data object)
-   vertex = vertex.data(graph.vertices, function(d) {return d.name;});
-   edge = edge.data(graph.edges);
-
-   // update
-   // vertex.attr("class","vertex");
-   // edge.attr("class","edge");
+   vertex = vertex.data(state.currentGraph.vertices, function(d) {return d.name;});
+   edge = edge.data(state.currentGraph.edges);
    
    // enter, append new vertices/edges
    edge.enter().insert("line", ":first-child")
@@ -95,120 +84,9 @@ function updateD3() {
    edge.exit().remove();
 }
 
-
-function tryParseEdge(str) {
-   var pieces = str.split(new RegExp("[ ,]+"), 2);
-   var firstName, secondName;
-
-   if (pieces.length == 2) {
-      firstName = pieces[0];
-      secondName = pieces[1]; 
-   } else if (pieces.length == 1) {
-      // greedily match any vertex name
-      firstName = str.slice(0,-1); // the whole string cannot be a single vertex
-      while (firstName.length > 0 && graph.getVertexByName(firstName) == null) {
-         firstName = firstName.slice(0,-1);         
-      }
-      
-      secondName = str.slice(firstName.length, str.length); 
-   }
-   
-   var firstVertex = graph.getVertexByName(firstName),
-       secondVertex = graph.getVertexByName(secondName);
-
-   if (firstVertex != null && secondVertex != null) {
-      return [firstVertex, secondVertex];
-   } else {
-      return null;
-   }
-}
-
-var KEY_BACKSPACE = 8,
-    KEY_ENTER = 13,
-    KEY_ESC = 27,
-    KEY_E = 101,
-    KEY_N = 110, // all lower case codes
-    KEY_V = 118,
-    KEY_0 = 48,
-    KEY_1 = 49,
-    KEY_2 = 50,
-    KEY_3 = 51,
-    KEY_4 = 52,
-    KEY_5 = 53,
-    KEY_6 = 54,
-    KEY_7 = 55,
-    KEY_8 = 56,
-    KEY_9 = 57,
-    KEY_SEMI = 59;
-
-var COMMAND_MODE = 0,
-    EX_MODE = 1,
-    COMMAND_EDGE_ADD = 2,
-    COMMAND_DELETE_GENERIC = 3,
-    COMMAND_DELETE_VERTEX = 4,
-    COMMAND_DELETE_EDGE = 5;
-
-state = {
-   commandBuffer:"",
-   mode:COMMAND_MODE,
-
-   clear: function() {
-      this.commandBuffer = "";
-      this.mode = COMMAND_MODE;
-      updateD3();
-   },
-
-   update: function(event) {
-      var code = event.which;
-
-      switch (this.mode) {
-         case COMMAND_EDGE_ADD: 
-            switch (code) {
-               case KEY_ENTER:
-                  edge = tryParseEdge(this.commandBuffer);
-                  if (edge) {
-                     graph.addEdge(edge[0], edge[1]);
-                  }
-                  this.clear();
-                  break;
-
-               case KEY_E:
-                  edge = tryParseEdge(this.commandBuffer);
-                  if (edge) {
-                     graph.addEdge(edge[0], edge[1]);
-                  } 
-                  this.clear();
-                  this.mode = COMMAND_EDGE_ADD;
-                  break;
-
-               case KEY_ESC:
-                  this.clear();
-                  break;
-
-               default:
-                  this.commandBuffer += String.fromCharCode(code); 
-            }
-            break;
-
-         default:
-            switch(code) {
-               case KEY_V:
-                  graph.addVertex();
-                  break;
-
-               case KEY_E:
-                  this.mode = COMMAND_EDGE_ADD;
-                  break;
-
-               default:
-                  ;
-            } 
-      }
-
-      updateD3();
-   }
-
-};
-
 initialize();
-$("body").keypress(function(e) { state.update(e); });
+
+$("body").keypress(function(e) { 
+   state.update(e);
+   updateD3();
+});
