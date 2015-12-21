@@ -1,4 +1,4 @@
-export function clone(obj) {
+function clone(obj) {
     var copy;
 
     // Handle the 3 simple types, and null or undefined

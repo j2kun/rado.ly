@@ -1,32 +1,9 @@
 // Working graph
-var graph; 
+var graph;
 
 // linked list of history
 var history = [graph];
 var current = 0;
-
-function getVertexByName(name) {
-   for (var i = 0; i < graph.vertices.length; i++) {
-      if (graph.vertices[i].name == name) {
-         return graph.vertices[i];
-      }
-   }
-   
-   return null;
-}
-
-function edgeInGraph(source, target) {
-   for (var i = 0; i < graph.edges.length; i++) {
-      var e = graph.edges[i];
-      if ((e.source.name == source.name && e.target.name == target.name) || 
-          (e.source.name == target.name && e.target.name == source.name)) {
-         return true;
-      }
-   }
-   
-   return false;
-}
-
 
 // D3 globals
 var edge,   // selection of all svg line objects
@@ -72,18 +49,10 @@ function initialize() {
        .attr("width", width)
        .attr("height", height);
 
-   graph = {numVertices:2,
-            numEdges:1,
-            vertices:
-               [
-                {id:0, name:"1"}, // name is always id + 1 
-                {id:1, name:"2"}
-               ],
-            edges:
-               [
-                {source:0, target:1},
-               ]
-            };
+   graph = new graph();
+   var v1 = graph.addVertex();
+   var v2 = graph.addVertex();
+   graph.addEdge(v1, v2);
 
    updateD3();
 }
@@ -127,18 +96,6 @@ function updateD3() {
 }
 
 
-function addVertex(vertex) {
-   graph.vertices.push({id:graph.numVertices, name:graph.numVertices+1});
-   graph.numVertices += 1; 
-}
-
-function addEdge(source, target) {
-   if (!edgeInGraph(source, target)) {
-      graph.edges.push({source:source, target:target});
-      graph.numEdges += 1; 
-   }
-}
-
 function tryParseEdge(str) {
    var pieces = str.split(new RegExp("[ ,]+"), 2);
    var firstName, secondName;
@@ -149,15 +106,15 @@ function tryParseEdge(str) {
    } else if (pieces.length == 1) {
       // greedily match any vertex name
       firstName = str.slice(0,-1); // the whole string cannot be a single vertex
-      while (firstName.length > 0 && getVertexByName(firstName) == null) {
+      while (firstName.length > 0 && graph.getVertexByName(firstName) == null) {
          firstName = firstName.slice(0,-1);         
       }
       
       secondName = str.slice(firstName.length, str.length); 
    }
    
-   var firstVertex = getVertexByName(firstName),
-       secondVertex = getVertexByName(secondName);
+   var firstVertex = graph.getVertexByName(firstName),
+       secondVertex = graph.getVertexByName(secondName);
 
    if (firstVertex != null && secondVertex != null) {
       return [firstVertex, secondVertex];
@@ -210,7 +167,7 @@ state = {
                case KEY_ENTER:
                   edge = tryParseEdge(this.commandBuffer);
                   if (edge) {
-                     addEdge(edge[0], edge[1]);
+                     graph.addEdge(edge[0], edge[1]);
                   }
                   this.clear();
                   break;
@@ -218,7 +175,7 @@ state = {
                case KEY_E:
                   edge = tryParseEdge(this.commandBuffer);
                   if (edge) {
-                     addEdge(edge[0], edge[1]);
+                     graph.addEdge(edge[0], edge[1]);
                   } 
                   this.clear();
                   this.mode = COMMAND_EDGE_ADD;
@@ -236,7 +193,7 @@ state = {
          default:
             switch(code) {
                case KEY_V:
-                  addVertex(vertex);
+                  graph.addVertex();
                   break;
 
                case KEY_E:
