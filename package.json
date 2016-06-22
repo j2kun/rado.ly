@@ -1,0 +1,22 @@
+{
+  "name": "rado.ly",
+  "version": "1.0.0",
+  "description": "A browser-based vim-style graph editor",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/j2kun/rado.ly.git"
+  },
+  "author": "Jeremy Kun",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/j2kun/rado.ly/issues"
+  },
+  "homepage": "https://github.com/j2kun/rado.ly#readme",
+  "dependencies": {
+    "coffee-script": "^1.10.0"
+  }
+}

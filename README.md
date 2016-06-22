@@ -18,6 +18,14 @@ called `11`, in which case it adds an edge from `11` to `7`.
 
 You can see a working (but buggy) prototype [here](http://homepages.math.uic.edu/~jkun2/rado/).
 
+
+### Installation
+
+nodeenv venv
+source venv/bin/activate
+npm install
+
+
 ### What's up with the name?
 
 The Rado graph is a famous mathematical object. It is an infinite graph which
